@@ -3,17 +3,19 @@ package br.com.couto.paking_api.controller;
 import br.com.couto.paking_api.Dtos.parkingRequestDto;
 import br.com.couto.paking_api.Dtos.parkingResponseDto;
 import br.com.couto.paking_api.service.ParkingService;
+import br.com.couto.paking_api.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/V1/parking")
+@RequestMapping("/parking")
 public class ParkingController {
 
 
@@ -23,19 +25,27 @@ public class ParkingController {
         this.service = service;
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<parkingResponseDto> cadastrarVeiculo(@RequestBody parkingRequestDto dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.cadastrartVeiculos(dto));
+        var usuario = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.cadastrarVeiculo(dto, usuario.getId()));
     }
 
-    @PutMapping()
+    @PutMapping("/atualizar")
     public ResponseEntity<parkingResponseDto> atualizarCadastro(@RequestBody parkingRequestDto dto,Long id){
         return ResponseEntity.ok().body(service.atualizarVeiculos(dto,id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<parkingResponseDto>> listarPorPaginacao(@PageableDefault(size = 10,sort = "id")Pageable pageable){
+    public ResponseEntity<Page<parkingResponseDto>> listarmeusVeiculos(@PageableDefault(size = 10,sort = "id")Pageable pageable){
+        var usuario = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
        return ResponseEntity.ok(service.obterVeiculos(pageable));
+    }
+
+    @GetMapping("/todos")
+    public ResponseEntity<Page<parkingResponseDto>> listarTodos(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable){
+        return ResponseEntity.ok(service.obterVeiculos(pageable));
     }
 
     @GetMapping("/usuario/{userId}")

@@ -9,7 +9,8 @@ public record parkingResponseDto(Long id,
                                  String modelo,
                                  String marca,
                                  String cor,
-                                 UUID userId
+                                 UUID userId,
+                                 String nomeUsuario
 
                                  ) {
 
@@ -21,7 +22,8 @@ public parkingResponseDto(ParkingModel parkingModel) {
             parkingModel.getModelo(),
             parkingModel.getMarca(),
             parkingModel.getCor(),
-            parkingModel.getUser().getId()
+            parkingModel.getUser().getId(),
+            parkingModel.getUser().getName()
 
     );
 }

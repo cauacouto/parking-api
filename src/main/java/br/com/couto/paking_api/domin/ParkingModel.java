@@ -1,5 +1,6 @@
 package br.com.couto.paking_api.domin;
 
+import br.com.couto.paking_api.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,13 @@ public class ParkingModel {
     private String modelo;
     private String marca;
     private String cor;
+
+    public ParkingModel(String placa, String modelo, String marca, String cor) {
+        this.placa = placa;
+        this.modelo = modelo;
+        this.marca = marca;
+        this.cor = cor;
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
