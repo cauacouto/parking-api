@@ -1,0 +1,55 @@
+name: Java CI
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [17, 21]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configurar Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ matrix.java-version }}
+
+    - name: Dar permissão ao Maven Wrapper
+      run: chmod +x mvnw
+
+    - name: Rodar testes
+      run: ./mvnw test
+
+    - name: Build do projeto
+      run: ./mvnw clean package
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configurar Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 21
+
+    - name: Dar permissão ao Maven Wrapper
+      run: chmod +x mvnw
+
+    - name: Gerar build
+      run: ./mvnw clean install
